@@ -10,5 +10,5 @@ package Datos;
  * @author JoseM
  */
 public class AlumnoDB {
-    
+    int idA;
 }
