@@ -69,6 +69,17 @@ public class TipoUsuario implements Serializable {
         this.usuarioList = usuarioList;
     }
 
+       
+    public int extraerIDTipoU(String nameType){
+        
+        int ID = 0;
+    
+        if (nameType.equals("Administrador")) {
+            ID = 1;
+        }
+        return ID;}
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

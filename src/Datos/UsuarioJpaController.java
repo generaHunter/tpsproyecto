@@ -22,6 +22,7 @@ import Logica_negocio.Usuario;
 import java.math.BigDecimal;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 /**
  *
@@ -29,10 +30,14 @@ import javax.persistence.EntityManagerFactory;
  */
 public class UsuarioJpaController implements Serializable {
 
-    public UsuarioJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+    public UsuarioJpaController() {
+        this.emf = Persistence.createEntityManagerFactory("escuelaPU");
     }
     private EntityManagerFactory emf = null;
+
+   // public UsuarioJpaController() {
+     //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //}
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
