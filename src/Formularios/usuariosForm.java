@@ -5,17 +5,104 @@
  */
 package Formularios;
 
+import Datos.TipoUsuarioJpaController;
+import Datos.UsuarioGradoJpaController;
+import Logica_negocio.Usuario;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+import Datos.UsuarioJpaController;
+import Logica_negocio.TipoUsuario;
+import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import jdk.nashorn.internal.parser.DateParser;
 /**
  *
  * @author ronal
  */
 public class usuariosForm extends javax.swing.JFrame {
 
+    DefaultTableModel modeloTable;
+    ArrayList<Usuario> lUsuarios;
+    DefaultComboBoxModel modelCombo = new DefaultComboBoxModel();
+    UsuarioJpaController CUsuarios = new UsuarioJpaController();
+    TipoUsuarioJpaController CTipoU = new TipoUsuarioJpaController();
+    
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    
+    
+    
+    
     /**
      * Creates new form usuariosForm
      */
     public usuariosForm() {
         initComponents();
+        
+         lUsuarios=new ArrayList<>();
+        modeloTable = (DefaultTableModel) this.tablaUsuarios.getModel(); 
+        
+        
+        llenarCombo();
+        CargarUsuario();
+            
+    }
+    
+    public void llenarCombo(){
+        try {
+     List<TipoUsuario> ListTipoU = CTipoU.findTipoUsuarioEntities();
+     
+     cbxUserType.setModel(modelCombo);
+     
+            for (int i = 0; i < ListTipoU.size(); i++) {
+                modelCombo.addElement(ListTipoU.get(i).getTipo());
+            }
+        } catch (Exception e) {
+        }
+    
+        
+   
+    }
+    
+    public void CargarUsuario(){
+        try {
+            Object o[] = null;
+            String idTipoU = "";
+        
+            List<Usuario> ListP = CUsuarios.findUsuarioEntities();
+            
+            
+            for (int i = 0; i < ListP.size(); i++) {
+                
+                modeloTable.addRow(o);
+                
+                
+                
+                modeloTable.setValueAt(ListP.get(i).getIdUsuario(), i, 0);
+                modeloTable.setValueAt(ListP.get(i).getNombre(), i, 1);
+                modeloTable.setValueAt(ListP.get(i).getApellido(), i, 2);
+                modeloTable.setValueAt(ListP.get(i).getUsername(), i, 3);
+                modeloTable.setValueAt(ListP.get(i).getIdUsuario(), i, 4);
+                idTipoU = ListP.get(i).getIdTipo().toString();
+                
+                if (idTipoU.equals("1")) {
+                    
+                    modeloTable.setValueAt("Administrador", i, 4);
+                }
+                
+                        
+                modeloTable.setValueAt(ListP.get(i).getFechaNac(), i, 5);
+                modeloTable.setValueAt(ListP.get(i).getDui(), i, 6);
+            }
+           
+            
+        } catch (Exception e) {
+        }
+    
+    
     }
 
     /**
@@ -67,32 +154,32 @@ public class usuariosForm extends javax.swing.JFrame {
 
         jLabel4.setText("Apellido:");
 
-        txtNombre.setText("jTextField1");
-
-        txtApellido.setText("jTextField2");
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Nombre de usuario:");
-
-        txtUserName.setText("jTextField3");
 
         cbxUserType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel6.setText("Tipo de usuario:");
 
         txtFechaNac.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
-        txtFechaNac.setText("/   / ");
         txtFechaNac.setToolTipText("");
 
         jLabel7.setText("Fecha Nacimiento:");
 
         jLabel8.setText("N° de DUI:");
 
-        txtDui.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("########-#"))));
-        txtDui.setText("########-#");
+        try {
+            txtDui.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("########-#")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         jLabel9.setText("Contraseña:");
-
-        txtPassword.setText("jTextField4");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -177,6 +264,11 @@ public class usuariosForm extends javax.swing.JFrame {
         jLabel10.setText("Acciones");
 
         jButton1.setText("Agregar Nuevo Usuario");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Eliminar Usuario");
 
@@ -245,18 +337,16 @@ public class usuariosForm extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(24, 24, 24)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 847, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(378, 378, 378)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 863, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -264,13 +354,13 @@ public class usuariosForm extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -307,6 +397,52 @@ public class usuariosForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        Usuario usuario = new Usuario();
+        TipoUsuario tipoUEntidad = new TipoUsuario();
+        
+       int idTipoU;
+        
+        try {
+            
+            
+            usuario.setNombre(txtNombre.getText());
+            usuario.setApellido(txtApellido.getText());
+            usuario.setFechaNac(formatter.parse(txtFechaNac.getText()));
+            usuario.setDui(txtDui.getText());
+            
+            idTipoU = tipoUEntidad.extraerIDTipoU(cbxUserType.getSelectedItem().toString());
+            
+            
+            
+            tipoUEntidad.setIdTipo(BigDecimal.valueOf(idTipoU));
+            
+            usuario.setIdTipo(tipoUEntidad);
+            
+            usuario.setUsername(txtUserName.getText());
+            usuario.setDui(txtDui.getText());
+            usuario.setPass(txtPassword.getText());
+            
+         
+           CUsuarios.create(usuario);
+            
+            CargarUsuario();
+            
+            
+          
+            
+            
+            
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreActionPerformed
 
     /**
      * @param args the command line arguments
