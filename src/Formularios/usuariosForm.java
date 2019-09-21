@@ -11,11 +11,15 @@ import Logica_negocio.Usuario;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import Datos.UsuarioJpaController;
+import Datos.exceptions.IllegalOrphanException;
+import Datos.exceptions.NonexistentEntityException;
 import Logica_negocio.TipoUsuario;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import jdk.nashorn.internal.parser.DateParser;
@@ -42,7 +46,7 @@ public class usuariosForm extends javax.swing.JFrame {
     public usuariosForm() {
         initComponents();
         
-         lUsuarios=new ArrayList<>();
+        lUsuarios=new ArrayList<>();
         modeloTable = (DefaultTableModel) this.tablaUsuarios.getModel(); 
         
         
@@ -134,7 +138,7 @@ public class usuariosForm extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btEliminar = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -270,7 +274,12 @@ public class usuariosForm extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Eliminar Usuario");
+        btEliminar.setText("Eliminar Usuario");
+        btEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEliminarActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Actualizar Usuario");
 
@@ -286,7 +295,7 @@ public class usuariosForm extends javax.swing.JFrame {
                 .addGap(0, 110, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(109, 109, 109))
         );
@@ -298,7 +307,7 @@ public class usuariosForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -431,11 +440,6 @@ public class usuariosForm extends javax.swing.JFrame {
             
             CargarUsuario();
             
-            
-          
-            
-            
-            
         } catch (Exception e) {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -443,6 +447,28 @@ public class usuariosForm extends javax.swing.JFrame {
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void btEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEliminarActionPerformed
+        // TODO add your handling code here:
+        
+        int indice=this.tablaUsuarios.getSelectedRow();
+       
+        try {
+            BigDecimal bigDecimalValue= new BigDecimal(modeloTable.getValueAt(indice,0).toString());
+            int opcion=JOptionPane.showConfirmDialog(null, "Está seguro que desea eliminar al usuario","Eliminar Usuario", JOptionPane.YES_NO_OPTION);
+            if(opcion==0)
+            {
+                CUsuarios.destroy(bigDecimalValue);
+                CargarUsuario();
+            }
+            
+        } catch (IllegalOrphanException ex) {
+            Logger.getLogger(usuariosForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NonexistentEntityException ex) {
+            Logger.getLogger(usuariosForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btEliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -480,9 +506,9 @@ public class usuariosForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btEliminar;
     private javax.swing.JComboBox<String> cbxUserType;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

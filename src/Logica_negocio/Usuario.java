@@ -41,6 +41,8 @@ public class Usuario implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
+    @SequenceGenerator(name = "seq_id_usuario", sequenceName = "seq_id_usuario", allocationSize = 1) 
+    @GeneratedValue(strategy= GenerationType.IDENTITY , generator="seq_id_usuario")
     @Column(name = "ID_USUARIO")
     @Ignore
     private BigDecimal idUsuario;
