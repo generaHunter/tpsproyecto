@@ -17,7 +17,7 @@
     <class>Logica_negocio.TipoUsuario</class>
     <class>Logica_negocio.TelefonoEncargado</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.56.1:1521:XE"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
       <property name="javax.persistence.jdbc.user" value="system"/>
       <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
       <property name="javax.persistence.jdbc.password" value="admin"/>
@@ -26,8 +26,8 @@
   <persistence-unit name="escuelaPUR" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.56.1:1521:XE"/>
-      <property name="javax.persistence.jdbc.user" value="sys as sysdba"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+      <property name="javax.persistence.jdbc.user" value="system"/>
       <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
       <property name="javax.persistence.jdbc.password" value="admin"/>
     </properties>

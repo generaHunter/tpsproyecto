@@ -14,9 +14,9 @@ import java.sql.SQLException;
 public class DB {
     
     private static Connection conn=null;
-    private static String user="sys";
+    private static String user="system";
     private static String pass="admin";
-    private static String url="jdbc:oracle:thin:@192.168.56.1:1521:xe"; 
+    private static String url="jdbc:oracle:thin:@localhost:1521:xe"; 
     
     public static Connection getConection()
     {
