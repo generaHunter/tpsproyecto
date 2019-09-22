@@ -17,12 +17,14 @@ import Logica_negocio.TipoUsuario;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import jdk.nashorn.internal.parser.DateParser;
+
 /**
  *
  * @author ronal
@@ -34,79 +36,82 @@ public class usuariosForm extends javax.swing.JFrame {
     DefaultComboBoxModel modelCombo = new DefaultComboBoxModel();
     UsuarioJpaController CUsuarios = new UsuarioJpaController();
     TipoUsuarioJpaController CTipoU = new TipoUsuarioJpaController();
-    
+
     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    Usuario usuarioEdit;
     
-    
-    
-    
+    boolean updateUser = false;
+
     /**
      * Creates new form usuariosForm
      */
     public usuariosForm() {
         initComponents();
-        
-        lUsuarios=new ArrayList<>();
-        modeloTable = (DefaultTableModel) this.tablaUsuarios.getModel(); 
-        
-        
+
+        lUsuarios = new ArrayList<>();
+        modeloTable = (DefaultTableModel) this.tablaUsuarios.getModel();
+
         llenarCombo();
+
+        btnUpdate.setEnabled(false);
         CargarUsuario();
-            
+
     }
-    
-    public void llenarCombo(){
+
+    public void llenarCombo() {
         try {
-     List<TipoUsuario> ListTipoU = CTipoU.findTipoUsuarioEntities();
-     
-     cbxUserType.setModel(modelCombo);
-     
+            List<TipoUsuario> ListTipoU = CTipoU.findTipoUsuarioEntities();
+
+            cbxUserType.setModel(modelCombo);
+
             for (int i = 0; i < ListTipoU.size(); i++) {
                 modelCombo.addElement(ListTipoU.get(i).getTipo());
             }
         } catch (Exception e) {
         }
-    
-        
-   
+
     }
-    
-    public void CargarUsuario(){
+
+    public void CargarUsuario() {
         try {
             Object o[] = null;
             String idTipoU = "";
-        
+            Date fecha;
+
             List<Usuario> ListP = CUsuarios.findUsuarioEntities();
-            
-            
+            modeloTable.setRowCount(0);
+
             for (int i = 0; i < ListP.size(); i++) {
-                
+
                 modeloTable.addRow(o);
+
+                modeloTable.setValueAt(ListP.get(i), i, 0);
+                modeloTable.setValueAt(ListP.get(i).getIdUsuario(), i, 1);
+                modeloTable.setValueAt(ListP.get(i).getNombre(), i, 2);
+                modeloTable.setValueAt(ListP.get(i).getApellido(), i, 3);
+                modeloTable.setValueAt(ListP.get(i).getUsername(), i, 4);
                 
-                
-                
-                modeloTable.setValueAt(ListP.get(i).getIdUsuario(), i, 0);
-                modeloTable.setValueAt(ListP.get(i).getNombre(), i, 1);
-                modeloTable.setValueAt(ListP.get(i).getApellido(), i, 2);
-                modeloTable.setValueAt(ListP.get(i).getUsername(), i, 3);
-                modeloTable.setValueAt(ListP.get(i).getIdUsuario(), i, 4);
                 idTipoU = ListP.get(i).getIdTipo().toString();
                 
-                if (idTipoU.equals("1")) {
-                    
-                    modeloTable.setValueAt("Administrador", i, 4);
+
+                if (ListP.get(i).getIdTipo().equals(1)) {
+
+                    modeloTable.setValueAt("Administrador", i, 5);
                 }
-                
-                        
-                modeloTable.setValueAt(ListP.get(i).getFechaNac(), i, 5);
-                modeloTable.setValueAt(ListP.get(i).getDui(), i, 6);
+
+                fecha = ListP.get(i).getFechaNac();
+
+                String fechaTexto = formatter.format(fecha);
+
+                modeloTable.setValueAt(fechaTexto, i, 6);
+                modeloTable.setValueAt(ListP.get(i).getDui(), i, 7);
+                modeloTable.setValueAt(ListP.get(i).getPass(), i, 8);
             }
-           
-            
+
         } catch (Exception e) {
         }
-    
-    
+
     }
 
     /**
@@ -134,12 +139,14 @@ public class usuariosForm extends javax.swing.JFrame {
         txtDui = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
         txtPassword = new javax.swing.JTextField();
+        txtIdU = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         btEliminar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaUsuarios = new javax.swing.JTable();
@@ -170,8 +177,13 @@ public class usuariosForm extends javax.swing.JFrame {
 
         jLabel6.setText("Tipo de usuario:");
 
-        txtFechaNac.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
+        txtFechaNac.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
         txtFechaNac.setToolTipText("");
+        txtFechaNac.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFechaNacActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Fecha Nacimiento:");
 
@@ -184,6 +196,8 @@ public class usuariosForm extends javax.swing.JFrame {
         }
 
         jLabel9.setText("Contraseña:");
+
+        txtIdU.setText("jLabel13");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -221,6 +235,10 @@ public class usuariosForm extends javax.swing.JFrame {
                             .addComponent(txtDui)
                             .addComponent(txtPassword))))
                 .addGap(154, 154, 154))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(183, 183, 183)
+                .addComponent(txtIdU, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,7 +273,9 @@ public class usuariosForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtIdU)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
@@ -281,7 +301,19 @@ public class usuariosForm extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Actualizar Usuario");
+        btnUpdate.setText("Actualizar Usuario");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -294,9 +326,10 @@ public class usuariosForm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 110, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(109, 109, 109))
         );
         jPanel2Layout.setVerticalGroup(
@@ -306,10 +339,12 @@ public class usuariosForm extends javax.swing.JFrame {
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(18, 18, 18)
                 .addComponent(btEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -320,18 +355,28 @@ public class usuariosForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Nombre", "Apellido", "Nombre Usuario", "Tipo Usuario", "Fecha Nacimiento", "N° DUI"
+                "idEntidad", "ID", "Nombre", "Apellido", "Nombre Usuario", "Tipo Usuario", "Fecha Nacimiento", "N° DUI", "Contraseña"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaUsuariosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaUsuarios);
+        if (tablaUsuarios.getColumnModel().getColumnCount() > 0) {
+            tablaUsuarios.getColumnModel().getColumn(8).setMinWidth(0);
+            tablaUsuarios.getColumnModel().getColumn(8).setPreferredWidth(0);
+            tablaUsuarios.getColumnModel().getColumn(8).setMaxWidth(0);
+        }
 
         jLabel11.setFont(new java.awt.Font("Tempus Sans ITC", 1, 12)); // NOI18N
         jLabel11.setText("Lista de Usuarios");
@@ -349,13 +394,15 @@ public class usuariosForm extends javax.swing.JFrame {
                 .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 863, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                        .addGap(662, 662, 662)
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 863, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -369,7 +416,7 @@ public class usuariosForm extends javax.swing.JFrame {
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -409,40 +456,46 @@ public class usuariosForm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
-        Usuario usuario = new Usuario();
-        TipoUsuario tipoUEntidad = new TipoUsuario();
-        
-       int idTipoU;
-        
+
         try {
-            
-            
+
+            CUsuarios.create(llenarEntidadUsuario());
+
+            CargarUsuario();
+
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public Usuario llenarEntidadUsuario() {
+
+        try {
+            int idTipoU;
+            Usuario usuario = new Usuario();
+            TipoUsuario tipoUEntidad = new TipoUsuario();
+
+  
+
             usuario.setNombre(txtNombre.getText());
             usuario.setApellido(txtApellido.getText());
             usuario.setFechaNac(formatter.parse(txtFechaNac.getText()));
             usuario.setDui(txtDui.getText());
-            
+
             idTipoU = tipoUEntidad.extraerIDTipoU(cbxUserType.getSelectedItem().toString());
-            
-            
-            
+
             tipoUEntidad.setIdTipo(BigDecimal.valueOf(idTipoU));
-            
+
             usuario.setIdTipo(tipoUEntidad);
-            
+
             usuario.setUsername(txtUserName.getText());
             usuario.setDui(txtDui.getText());
             usuario.setPass(txtPassword.getText());
-            
-         
-           CUsuarios.create(usuario);
-            
-            CargarUsuario();
-            
+
+            return usuario;
         } catch (Exception e) {
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        return null;
+    }
 
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
@@ -450,25 +503,113 @@ public class usuariosForm extends javax.swing.JFrame {
 
     private void btEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEliminarActionPerformed
         // TODO add your handling code here:
-        
-        int indice=this.tablaUsuarios.getSelectedRow();
-       
+
+        int indice = this.tablaUsuarios.getSelectedRow();
+
         try {
-            BigDecimal bigDecimalValue= new BigDecimal(modeloTable.getValueAt(indice,0).toString());
-            int opcion=JOptionPane.showConfirmDialog(null, "Está seguro que desea eliminar al usuario","Eliminar Usuario", JOptionPane.YES_NO_OPTION);
-            if(opcion==0)
-            {
+            BigDecimal bigDecimalValue = new BigDecimal(modeloTable.getValueAt(indice, 1).toString());
+            int opcion = JOptionPane.showConfirmDialog(null, "Está seguro que desea eliminar al usuario "+bigDecimalValue.toString(), "Eliminar Usuario", JOptionPane.YES_NO_OPTION);
+            if (opcion == 0) {
                 CUsuarios.destroy(bigDecimalValue);
                 CargarUsuario();
             }
-            
+
         } catch (IllegalOrphanException ex) {
             Logger.getLogger(usuariosForm.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NonexistentEntityException ex) {
             Logger.getLogger(usuariosForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_btEliminarActionPerformed
+
+    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
+        // TODO add your handling code here:
+
+        int indice = this.tablaUsuarios.getSelectedRow();
+        if (indice > -1) {
+            try {
+                updateUser = true;
+
+   
+                txtNombre.setText(modeloTable.getValueAt(indice, 2).toString());
+                txtApellido.setText(modeloTable.getValueAt(indice, 3).toString());
+                txtUserName.setText(modeloTable.getValueAt(indice, 4).toString());
+                txtFechaNac.setText(modeloTable.getValueAt(indice, 6).toString());
+                txtDui.setText(modeloTable.getValueAt(indice, 7).toString());
+                txtPassword.setText(modeloTable.getValueAt(indice, 8).toString());
+
+                btnUpdate.setEnabled(true);
+                
+                        usuarioEdit = (Usuario) tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(), 0);
+            } catch (Exception e) {
+            }
+        }
+
+    }//GEN-LAST:event_tablaUsuariosMouseClicked
+
+    public void LimpearCampos() {
+        updateUser = false;
+
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtUserName.setText("");
+        cbxUserType.setSelectedItem("");
+        txtFechaNac.setText("");
+        txtDui.setText("");
+        txtPassword.setText("");
+
+        btnUpdate.setEnabled(false);
+
+    }
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+
+        LimpearCampos();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+
+        if (updateUser == true) {
+            try {
+                int opcion = JOptionPane.showConfirmDialog(null, "Está seguro que desea actul al usuario", "Eliminar Usuario", JOptionPane.YES_NO_OPTION);
+                if (opcion == 0) {
+
+             int idTipoU;
+    
+            TipoUsuario tipoUEntidad = new TipoUsuario();
+
+
+            usuarioEdit.setNombre(txtNombre.getText());
+            usuarioEdit.setApellido(txtApellido.getText());
+            usuarioEdit.setFechaNac(formatter.parse(txtFechaNac.getText()));
+            usuarioEdit.setDui(txtDui.getText());
+
+            idTipoU = tipoUEntidad.extraerIDTipoU(cbxUserType.getSelectedItem().toString());
+
+            tipoUEntidad.setIdTipo(BigDecimal.valueOf(idTipoU));
+
+            usuarioEdit.setIdTipo(tipoUEntidad);
+
+            usuarioEdit.setUsername(txtUserName.getText());
+            usuarioEdit.setDui(txtDui.getText());
+            usuarioEdit.setPass(txtPassword.getText());
+            
+            CUsuarios.edit(usuarioEdit);
+           
+                    CargarUsuario();
+                }
+            } catch (Exception e) {
+
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void txtFechaNacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaNacActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFechaNacActionPerformed
 
     /**
      * @param args the command line arguments
@@ -507,9 +648,10 @@ public class usuariosForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btEliminar;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbxUserType;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -531,6 +673,7 @@ public class usuariosForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtApellido;
     private javax.swing.JFormattedTextField txtDui;
     private javax.swing.JFormattedTextField txtFechaNac;
+    private javax.swing.JLabel txtIdU;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtUserName;
